@@ -1,44 +1,43 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 
 
-const char* decoder = "1111" "\0" "222" "\0" "333" "\0" "444" "\0" "555" "\0" "666" "\0" "7777" "\0" "888" "\0" "9999" "\0" "****" "\0" "0";
-const char* separator[2] = {" ", "_"};
+const char* decoder[] = {
+    "11111", "2222", "3333", "4444", "5555", "6666", "77777", "8888", "99999", "*****", "00", " ", "_", ""
+};
+
+void decodeChar(char c, char** key, size_t* count){
+   bool k = false;
+   *count = 0;
+
+   if(c == '!')  *count = 4, *key = decoder[0], k = true;
+   if(c == '?')  *count = 3, *key = decoder[0], k = true;
+   if(c == ',')  *count = 2, *key = decoder[0], k = true;
+   if(c == '.')  *count = 1, *key = decoder[0], k = true;
+   if(c == '=')  *count = 4, *key = decoder[9], k = true;
+   if(c == '+')  *count = 3, *key = decoder[9], k = true;
+   if(c == '-')  *count = 2, *key = decoder[9], k = true;
+   if(c == '\'') *count = 1, *key = decoder[9], k = true;
+   if(c == ' ')  *count = 1, *key = decoder[10], k = true;
+
+   if(c >= '0' && c <= '9'){
+       *key = decoder[(c == '0')?(10):(c - '1')];
+       *count = strlen(*key);
+       k = true;
+   }
 
 
-void decodeChar(char c, char* key, size_t* offset){
-    *key = '-';
-    if(c == '!')  *offset = 0, *key = '1';
-    if(c == '?')  *offset = 1, *key = '1';
-    if(c == ',')  *offset = 2, *key = '1';
-    if(c == '.')  *offset = 3, *key = '1';
-    if(c == '=')  *offset = 39, *key = '*';
-    if(c == '+')  *offset = 40, *key = '*';
-    if(c == '-')  *offset = 41, *key = '*';
-    if(c == '\'') *offset = 42, *key = '*';
-    if(c == ' ')  *offset = 44, *key = '0';
-
-
-
-
-
-    if(*key != '-') return;
-
-
-
-
-    c &= 0x5F; // to uppercase
-    if('A' <= c && c <= 'C') *offset = 5  + ('C'-'A') - (c - 'A'), *key = '2';
-    if('D' <= c && c <= 'F') *offset = 9  + ('F'-'D') - (c - 'D'), *key = '3';
-    if('G' <= c && c <= 'I') *offset = 13 + ('I'-'G') - (c - 'G'), *key = '4';
-    if('J' <= c && c <= 'L') *offset = 17 + ('L'-'J') - (c - 'J'), *key = '5';
-    if('M' <= c && c <= 'O') *offset = 21 + ('O'-'M') - (c - 'M'), *key = '6';
-    if('P' <= c && c <= 'S') *offset = 25 + ('S'-'P') - (c - 'P'), *key = '7';
-    if('T' <= c && c <= 'V') *offset = 30 + ('V'-'T') - (c - 'T'), *key = '8';
-    if('W' <= c && c <= 'Z') *offset = 34 + ('Z'-'W') - (c - 'W'), *key = '9';
-
-
-
+   if(k) return;
+   c &= 0x5F; // to uppercase
+   if('A' <= c && c <= 'C') *key = decoder[1], *count = c - 'A' + 1;
+   if('D' <= c && c <= 'F') *key = decoder[2], *count = c - 'D' + 1;
+   if('G' <= c && c <= 'I') *key = decoder[3], *count = c - 'G' + 1;
+   if('J' <= c && c <= 'L') *key = decoder[4], *count = c - 'J' + 1;
+   if('M' <= c && c <= 'O') *key = decoder[5], *count = c - 'M' + 1;
+   if('P' <= c && c <= 'S') *key = decoder[6], *count = c - 'P' + 1;
+   if('T' <= c && c <= 'V') *key = decoder[7], *count = c - 'T' + 1;
+   if('W' <= c && c <= 'Z') *key = decoder[8], *count = c - 'W' + 1;
 }
 
 
@@ -53,10 +52,11 @@ bool isLetter(char c){
 void to_t9(char* str){
     printf("\n%s\n",str);
 
-    char currentKey = '\0', previousKey = '\0';
-    size_t offset = 0;
+    char *currentKey = "\0", *previousKey = "\0";
+    size_t count = 0;
     size_t currentCase = 0;
     char* originalStrPtr = str;
+    bool changedCase = 0;
     while(*str){
 
         // adjust case
@@ -84,20 +84,20 @@ void to_t9(char* str){
             if(targetCase != currentCase){
                 printf((str == originalStrPtr)?(""):(" "));
                 while (targetCase != currentCase)
-                        currentCase += 1, currentCase %= 3, printf("#");
+                        currentCase += 1, currentCase %= 3, printf("#"), changedCase = true;
             }
         }
 
 
         // print character
         previousKey = currentKey;
-        decodeChar(*str, &currentKey, &offset);
-        printf("%s%s", separator[currentKey == previousKey], decoder + offset);
+        decodeChar(*str, &currentKey, &count);
+
+        printf("%s%*.*s", decoder[11 + (currentKey == previousKey) + (2*(!changedCase && originalStrPtr == str))], count, count, currentKey);
         str++;
+        changedCase = false;
     }
 }
-
-
 
 
 int main(void){
