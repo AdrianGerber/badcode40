@@ -6,7 +6,7 @@ const char* d[] = {
     "11111", "2222", "3333", "4444", "5555", "6666", "77777", "8888", "99999", "*****", "00", " ", "_", ""
 };
 
-void dc(char c, char** k, size_t* x){
+void dc(char c, char** k, char* x){
    bool f = false;
    *x = 0;
 
@@ -39,22 +39,19 @@ void dc(char c, char** k, size_t* x){
 }
 
 
-bool uc(char c){
+char uc(char c){
     return 'A' <= c && c <= 'Z';
 }
 
-bool il(char c){
+char il(char c){
     return ('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z') ;
 }
 
 void to_t9(char* str){
     printf("\n%s\n",str);
 
-    char *kc = "\0", *kp = "\0";
-    size_t x = 0;
-    size_t cc = 0;
-    char* s = str;
-    bool cs = 0;
+    char *kc = "\0", *kp = "\0", *s=str, x = 0, cc = 0, cs = false;
+
     while(*str){
 
         if (cc == 1)
