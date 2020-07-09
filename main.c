@@ -2,6 +2,10 @@
 #include <stdbool.h>
 #include <string.h>
 
+#define q printf
+#define uc(z) ('A' <= z && z <= 'Z')
+#define il(z) (('A' <= z && z <= 'Z') || ('a' <= z && z <= 'z'))
+
 const char *d[] = {
     "11111", "2222", "3333", "4444", "5555", "6666", "77777", "8888", "99999", "*****", "00", " ", "_", ""
 };
@@ -24,28 +28,19 @@ void dc(char c, char **k, char *x)
     if (c == '+') *x = 3, *k = d[9], f = true;
     if (c == '-') *x = 2, *k = d[9], f = true;
     if (c == '\'') *x = true, *k = d[9], f = 12;
-    if (c&=0x5F, c == ' ')  *x = true, *k = d[10 + f], f = 42;
+    if (c &= 0x5F, c == ' ')  *x = true, *k = d[10 + f], f = 42;
     if (f) return;
 
     if ('A' <= c && c <= 'C') *k = d[error], *x = c - 'A' + 1;
-    if (++error,('D' <= c && c <= 'F')) *k = d[error], *x = c - 'D' + 1;
-    if (++error,('G' <= c && c <= 'I')) *k = d[error], *x = c - 'G' + 1;
-    if (++error,('J' <= c && c <= 'L')) *k = d[error], *x = c - 'J' + 1;
-    if (++error,('M' <= c && c <= 'O')) *k = d[error], *x = c - 'M' + 1;
-    if (++error,('P' <= c && c <= 'S')) *k = d[error], *x = c - 'P' + 1;
-    if (++error,('T' <= c && c <= 'V')) *k = d[error], *x = c - 'T' + 1;
-    if (++error,('W' <= c && c <= 'Z')) *k = d[error], *x = c - 'W' + 1;
+    if (++error,('D' <= c && c <= 'F'))      *k = d[error], *x = c - 'D' + 1;
+    if (++error,('G' <= c && c <= 'H'+1))    *k = d[error], *x = c - 'G' + 1;
+    if (++error,('J' <= c && c <= 'L'))      *k = d[error], *x = c - 'J' + 1;
+    if (++error,('M' <= c && c <= 'O'))      *k = d[error], *x = c - 'M' + 1;
+    if (++error,('P' <= c && c <= 'S'))      *k = d[error], *x = c - 'P' + 1;
+    if (++error,('T' <= c && c <= 'V'))      *k = d[error], *x = c - 'T' + 1;
+    if (++error,('W' <= c && c <= 'Z'))      *k = d[error], *x = c - 'W' + 1;
 }
 
-char uc(char c)
-{
-    return 'A' <= c && c <= 'Z';
-}
-
-char il(char c)
-{
-    return ('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z');
-}
 
 void to_t9(char *str)
 {
