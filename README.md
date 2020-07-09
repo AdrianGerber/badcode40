@@ -1,2 +1,1 @@
-# badcode40
- T9 Button Presses
+[Challenge description](https://www.reddit.com/r/badcode/comments/hm7ifj/bad_code_coding_challenge_40_to_t9_button_presses/)
