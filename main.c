@@ -2,100 +2,95 @@
 #include <stdbool.h>
 #include <string.h>
 
-
-const char* decoder[] = {
+const char* d[] = {
     "11111", "2222", "3333", "4444", "5555", "6666", "77777", "8888", "99999", "*****", "00", " ", "_", ""
 };
 
-void decodeChar(char c, char** key, size_t* count){
-   bool k = false;
-   *count = 0;
+void dc(char c, char** k, size_t* x){
+   bool f = false;
+   *x = 0;
 
-   if(c == '!')  *count = 4, *key = decoder[0], k = true;
-   if(c == '?')  *count = 3, *key = decoder[0], k = true;
-   if(c == ',')  *count = 2, *key = decoder[0], k = true;
-   if(c == '.')  *count = 1, *key = decoder[0], k = true;
-   if(c == '=')  *count = 4, *key = decoder[9], k = true;
-   if(c == '+')  *count = 3, *key = decoder[9], k = true;
-   if(c == '-')  *count = 2, *key = decoder[9], k = true;
-   if(c == '\'') *count = 1, *key = decoder[9], k = true;
-   if(c == ' ')  *count = 1, *key = decoder[10], k = true;
+   if(c == '!')  *x = 4, *k = d[0], f = true;
+   if(c == '?')  *x = 3, *k = d[0], f = true;
+   if(c == ',')  *x = 2, *k = d[0], f = true;
+   if(c == '.')  *x = 1, *k = d[0], f = true;
+   if(c == '=')  *x = 4, *k = d[9], f = true;
+   if(c == '+')  *x = 3, *k = d[9], f = true;
+   if(c == '-')  *x = 2, *k = d[9], f = true;
+   if(c == '\'') *x = 1, *k = d[9], f = true;
+   if(c == ' ')  *x = 1, *k = d[10], f = true;
 
    if(c >= '0' && c <= '9'){
-       *key = decoder[(c == '0')?(10):(c - '1')];
-       *count = strlen(*key);
-       k = true;
+       *k = d[(c == '0')?(10):(c - '1')];
+       *x = strlen(*k);
+       f = true;
    }
 
-
-   if(k) return;
-   c &= 0x5F; // to uppercase
-   if('A' <= c && c <= 'C') *key = decoder[1], *count = c - 'A' + 1;
-   if('D' <= c && c <= 'F') *key = decoder[2], *count = c - 'D' + 1;
-   if('G' <= c && c <= 'I') *key = decoder[3], *count = c - 'G' + 1;
-   if('J' <= c && c <= 'L') *key = decoder[4], *count = c - 'J' + 1;
-   if('M' <= c && c <= 'O') *key = decoder[5], *count = c - 'M' + 1;
-   if('P' <= c && c <= 'S') *key = decoder[6], *count = c - 'P' + 1;
-   if('T' <= c && c <= 'V') *key = decoder[7], *count = c - 'T' + 1;
-   if('W' <= c && c <= 'Z') *key = decoder[8], *count = c - 'W' + 1;
+   if(f) return;
+   c &= 0x5F;
+   if('A' <= c && c <= 'C') *k = d[1], *x = c - 'A' + 1;
+   if('D' <= c && c <= 'F') *k = d[2], *x = c - 'D' + 1;
+   if('G' <= c && c <= 'I') *k = d[3], *x = c - 'G' + 1;
+   if('J' <= c && c <= 'L') *k = d[4], *x = c - 'J' + 1;
+   if('M' <= c && c <= 'O') *k = d[5], *x = c - 'M' + 1;
+   if('P' <= c && c <= 'S') *k = d[6], *x = c - 'P' + 1;
+   if('T' <= c && c <= 'V') *k = d[7], *x = c - 'T' + 1;
+   if('W' <= c && c <= 'Z') *k = d[8], *x = c - 'W' + 1;
 }
 
 
-bool uppercase(char c){
+bool uc(char c){
     return 'A' <= c && c <= 'Z';
 }
 
-bool isLetter(char c){
+bool il(char c){
     return ('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z') ;
 }
 
 void to_t9(char* str){
     printf("\n%s\n",str);
 
-    char *currentKey = "\0", *previousKey = "\0";
-    size_t count = 0;
-    size_t currentCase = 0;
-    char* originalStrPtr = str;
-    bool changedCase = 0;
+    char *kc = "\0", *kp = "\0";
+    size_t x = 0;
+    size_t cc = 0;
+    char* s = str;
+    bool cs = 0;
     while(*str){
 
-        // adjust case
-        if (currentCase == 1)
-            currentCase -= 1;
-        if (isLetter(*str))
+        if (cc == 1)
+            cc -= 1;
+        if (il(*str))
         {   
-            size_t targetCase = 0;
-            if (uppercase(*str))
+            size_t tc = 0;
+            if (uc(*str))
             {
-                char nextChar = *(str + 1);
-                if ((isLetter(nextChar) && uppercase(nextChar)) || !isLetter(nextChar))
+                char nc = *(str + 1);
+                if ((il(nc) && uc(nc)) || !il(nc))
                 {
-                    targetCase = 2;
+                    tc = 2;
                 }
                 else
                 {
-                    targetCase = 1;
+                    tc = 1;
                 }
             }
             else
             {
-                targetCase = 0;
+                tc = 0;
             }
-            if(targetCase != currentCase){
-                printf((str == originalStrPtr)?(""):(" "));
-                while (targetCase != currentCase)
-                        currentCase += 1, currentCase %= 3, printf("#"), changedCase = true;
+            if(tc != cc){
+                printf((str == s)?(""):(" "));
+                while (tc != cc)
+                        cc += 1, cc %= 3, printf("#"), cs = true;
             }
         }
 
+        kp = kc;
+        dc(*str, &kc, &x);
 
-        // print character
-        previousKey = currentKey;
-        decodeChar(*str, &currentKey, &count);
-
-        printf("%s%*.*s", decoder[11 + (currentKey == previousKey) + (2*(!changedCase && originalStrPtr == str))], count, count, currentKey);
+        printf("%s%*.*s", d[11 + (kc == kp) + (2*(!cs && s == str))], x, x, kc);
         str++;
-        changedCase = false;
+        cs = false;
     }
 }
 
